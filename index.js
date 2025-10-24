@@ -30,21 +30,16 @@ function savePremium(data) {
 
 // Cek status user
 async function checkUser(ctx) {
+    const channelId = "@VexxuzzZEncryptPrivate"; // ID channel
     try {
-        const memberChannel = await ctx.telegram.getChatMember(config.channelId, ctx.from.id);
-        const memberGroup = await ctx.telegram.getChatMember(config.groupId, ctx.from.id);
-        
-        if (memberChannel.status === 'left' || memberGroup.status === 'left') {
-            ctx.reply(`⚠️ Harus join channel ${config.channelUsername} dan group ${config.groupUsername} terlebih dahulu!`);
-            return false;
-        }
-        return true;
+        const chatMember = await ctx.telegram.getChatMember(channelId, ctx.from.id);
+        return ["member", "administrator", "creator"].includes(chatMember.status);
     } catch (error) {
-        console.error('Error checking user:', error);
-        ctx.reply('❌ Error saat mengecek keanggotaan. Pastikan bot adalah admin di channel dan group.');
+        log("Gagal memeriksa keanggotaan channel", error);
         return false;
     }
 }
+
 
 // Command start
 bot.start(async (ctx) => {
